@@ -18,15 +18,13 @@ window.onload = function()
 
 	setInterval(dibujarReloj, 1000);
 	dibujarReloj();
-
+	
 	function dibujarReloj() {
-
 		var fecha   = new Date();
 		var hora   = fecha.getHours();
 		var minuto = fecha.getMinutes();
 		var segundo = fecha.getSeconds();
-
-
+		reproducirSonidoCada20Segundos();
 		// Especificación del color
 		contexto.strokeStyle = '#666666';
 
@@ -71,10 +69,21 @@ window.onload = function()
 		contexto.translate(-centroX, -centroY);
 		contexto.restore();
 	}
+
+	function reproducirSonidoCada20Segundos() {
+		document.getElementById('reloj').addEventListener('click', function() {
+			var sonido = new Audio('./mp3/tic-tac-27828.mp3');
+			sonido.currentTime = 0;
+				sonido.play();			
+			setInterval(function() {
+				sonido.currentTime = 0;
+				sonido.play();
+			}, 20000); // Reproducir cada 20 segundos (20000 milisegundos)
+		}, { once: true });
+	}
 }
 //-->
 </script>
-
 </head>
 <body>
 	<canvas id="reloj"></canvas>
