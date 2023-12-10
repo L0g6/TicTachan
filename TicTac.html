@@ -24,7 +24,7 @@ window.onload = function()
 		var hora   = fecha.getHours();
 		var minuto = fecha.getMinutes();
 		var segundo = fecha.getSeconds();
-		reproducirSonidoCada20Segundos();
+		reproducirSonidoCada15Segundos();
 		// Especificación del color
 		contexto.strokeStyle = '#666666';
 
@@ -70,15 +70,15 @@ window.onload = function()
 		contexto.restore();
 	}
 
-	function reproducirSonidoCada20Segundos() {
+	function reproducirSonidoCada15Segundos() {
 		document.getElementById('reloj').addEventListener('click', function() {
-			var sonido = new Audio('./mp3/tic-tac-27828.mp3');
+			var sonido = new Audio('./mp3/ticking-clock_1-27477.mp3'); // dura 16 s
 			sonido.currentTime = 0;
 				sonido.play();			
 			setInterval(function() {
 				sonido.currentTime = 0;
 				sonido.play();
-			}, 20000); // Reproducir cada 20 segundos (20000 milisegundos)
+			}, 15000); // Reproducir cada 10 segundos (10000 milisegundos)
 		}, { once: true });
 	}
 }
