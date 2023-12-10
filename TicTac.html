@@ -1,92 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>TicTac</title>
+	<title>Temporizador de Respiraciones</title>
 
-<script type="text/javascript">
-<!--
-window.onload = function()
-{
-	var ancho   = 100;
-	var alto  = 100;
-	var centroX = Math.floor(ancho / 2);
-	var centroY = Math.floor(alto / 2);
-	var lienzo  = document.getElementById('reloj');
-	var contexto = lienzo.getContext('2d');
-
-	setInterval(dibujarReloj, 1000);
-	dibujarReloj();
-	function dibujarReloj() {
-		var fecha   = new Date();
-		var hora   = fecha.getHours();
-		var minuto = fecha.getMinutes();
-		var segundo = fecha.getSeconds();
-		var mp3Tic ='./mp3/ticking-clock_1-27477.mp3';
-
-		// Un tic cada segundo durante 15 seg
-		reproducirSonidoCadaNsegundos(mp3Tic, 15);
-
-		// Especificación del color
-		contexto.strokeStyle = '#666666';
-
-		contexto.clearRect(0, 0, lienzo.width, lienzo.height);
-
-		// Dibujar el dial
-		contexto.beginPath();
-		contexto.arc(centroX, centroY, centroX - 1, 0, Math.PI*2, false);
-		contexto.stroke();
-
-		contexto.save();
-		contexto.translate(ancho/2, alto/2);
-		for(var i=0;i < 360; i+= 30){
-			contexto.rotate( 30 * Math.PI / 180);
-			contexto.beginPath();
-			contexto.moveTo(0, centroY * 0.8);
-			contexto.lineTo(0, centroY * 0.9);
-			contexto.stroke();
+	<script type="text/javascript">
+		<!--
+		window.onload = function()
+		{
+			var ancho   = 100;
+			var alto  = 100;
+			var centroX = Math.floor(ancho / 2);
+			var centroY = Math.floor(alto / 2);
+			var lienzo  = document.getElementById('reloj');
+			var contexto = lienzo.getContext('2d');
+			var minutos = 0;
+			var segundos = 0;
+			var temporizador;
+	
+			setInterval(dibujarReloj, 1000);
+			dibujarReloj();
+	
+			function dibujarReloj() {
+				var fecha   = new Date();
+				var hora   = fecha.getHours();
+				var minuto = fecha.getMinutes();
+				var segundo = fecha.getSeconds();
+				var mp3Tic ='./mp3/ticking-clock_1-27477.mp3';
+	
+				// Un tic cada segundo durante 15 seg
+				reproducirSonidoCadaNsegundos(mp3Tic, 15);
+	
+				// Especificación del color
+				contexto.strokeStyle = '#666666';
+	
+				contexto.clearRect(0, 0, lienzo.width, lienzo.height);
+	
+				// Dibujar el dial
+				contexto.beginPath();
+				contexto.arc(centroX, centroY, centroX - 1, 0, Math.PI*2, false);
+				contexto.stroke();
+	
+				contexto.save();
+				contexto.translate(ancho/2, alto/2);
+				for(var i=0;i < 360; i+= 30){
+					contexto.rotate( 30 * Math.PI / 180);
+					contexto.beginPath();
+					contexto.moveTo(0, centroY * 0.8);
+					contexto.lineTo(0, centroY * 0.9);
+					contexto.stroke();
+				}
+				contexto.translate(-ancho/2, -alto/2);
+				contexto.restore();
+	
+				contexto.strokeStyle = '#333333';
+	
+				dibujarAguja(centroY * 0.5, hora * 30 + minuto / 60 * 30);
+				dibujarAguja(centroY * 0.8, minuto * 6 + segundo / 60 * 6);
+	
+				contexto.strokeStyle = '#EE0000';
+	
+				dibujarAguja(centroY * 0.8, segundo * 6);
+	
+				// Mostrar tiempo restante
+				mostrarTiempoRestante();
+			}
+	
+			function dibujarAguja(longitud, angulo){
+				contexto.save();
+				contexto.translate(centroX, centroY);
+				contexto.rotate( angulo * Math.PI / 180);
+				contexto.beginPath();
+				contexto.moveTo(0, 0);
+				contexto.lineTo(0, -longitud);
+				contexto.stroke();
+				contexto.translate(-centroX, -centroY);
+				contexto.restore();
+			}
+			
+			function reproducirSonidoCadaNsegundos(rutaSonido, duracionSonido) {
+				document.getElementById('reloj').addEventListener('click', function() {
+					var sonido = new Audio(rutaSonido);
+					sonido.currentTime = 0;
+					sonido.play();
+					setInterval(function() {
+						sonido.currentTime = 0;
+						sonido.play();
+					}, duracionSonido * 1000); // Reproducir cada duracionSonido segundos
+				}, { once: true });
+			}
+	
+			function mostrarTiempoRestante() {
+				contexto.font = "20px Arial";
+				contexto.fillStyle = "#333333";
+				contexto.fillText(minutos.toString().padStart(2, '0') + ":" + segundos.toString().padStart(2, '0'), 30, 50);
+			}
+	
+			function iniciarTemporizador() {
+				var tiempoTotalSegundos = minutos * 60 + segundos;
+				temporizador = setInterval(function() {
+					if (tiempoTotalSegundos <= 0) {
+						clearInterval(temporizador);
+						alert("¡Tiempo finalizado!");
+					} else {
+						tiempoTotalSegundos--;
+						minutos = Math.floor(tiempoTotalSegundos / 60);
+						segundos = tiempoTotalSegundos % 60;
+						dibujarReloj();
+					}
+				}, 1000);
+			}
+	
+			document.getElementById('startButton').addEventListener('click', function() {
+				minutos = parseInt(document.getElementById('minutosInput').value);
+				segundos = parseInt(document.getElementById('segundosInput').value);
+				dibujarReloj();
+				iniciarTemporizador();
+			});
 		}
-		contexto.translate(-ancho/2, -alto/2);
-		contexto.restore();
-
-		contexto.strokeStyle = '#333333';
-
-		dibujarAguja(centroY * 0.5, hora * 30 + minuto / 60 * 30);
-		dibujarAguja(centroY * 0.8, minuto * 6 + segundo / 60 * 6);
-
-		contexto.strokeStyle = '#EE0000';
-
-		dibujarAguja(centroY * 0.8, segundo * 6);
-	}
-
-	function dibujarAguja(longitud, angulo){
-		contexto.save();
-		contexto.translate(centroX, centroY);
-		contexto.rotate( angulo * Math.PI / 180);
-		contexto.beginPath();
-		contexto.moveTo(0, 0);
-		contexto.lineTo(0, -longitud);
-		contexto.stroke();
-		contexto.translate(-centroX, -centroY);
-		contexto.restore();
-	}
-	function reproducirSonidoCadaNsegundos(rutaSonido, duracionSonido) {
-		document.getElementById('reloj').addEventListener('click', function() {
-			var sonido = new Audio(rutaSonido);
-			sonido.currentTime = 0;
-			sonido.play();
-			setInterval(function() {
-				sonido.currentTime = 0;
-				sonido.play();
-			}, duracionSonido * 1000); // Reproducir cada duracionSonido segundos
-		}, { once: true });
-	}
-}
-//-->
-</script>
+		//-->
+	</script>
 </head>
+
 <body>
-	<canvas id="reloj"></canvas>
+	<canvas id="reloj" width="200" height="200"></canvas>
+	<br>
+	<label for="minutosInput">Minutos:</label>
+	<input type="number" id="minutosInput" min="0" value="0">
+	<label for="segundosInput">Segundos:</label>
+	<input type="number" id="segundosInput" min="0" max="59" value="0">
+	<button id="startButton">Iniciar Temporizador</button>
 </body>
+
 </html>
