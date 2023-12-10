@@ -18,13 +18,16 @@ window.onload = function()
 
 	setInterval(dibujarReloj, 1000);
 	dibujarReloj();
-	
 	function dibujarReloj() {
 		var fecha   = new Date();
 		var hora   = fecha.getHours();
 		var minuto = fecha.getMinutes();
 		var segundo = fecha.getSeconds();
-		reproducirSonidoCada15Segundos();
+		var mp3Tic ='./mp3/ticking-clock_1-27477.mp3';
+
+		// Un tic cada segundo durante 15 seg
+		reproducirSonidoCadaNsegundos(mp3Tic, 15);
+
 		// Especificación del color
 		contexto.strokeStyle = '#666666';
 
@@ -57,7 +60,6 @@ window.onload = function()
 		dibujarAguja(centroY * 0.8, segundo * 6);
 	}
 
-	// Función para dibujar las agujas
 	function dibujarAguja(longitud, angulo){
 		contexto.save();
 		contexto.translate(centroX, centroY);
@@ -69,16 +71,15 @@ window.onload = function()
 		contexto.translate(-centroX, -centroY);
 		contexto.restore();
 	}
-
-	function reproducirSonidoCada15Segundos() {
+	function reproducirSonidoCadaNsegundos(rutaSonido, duracionSonido) {
 		document.getElementById('reloj').addEventListener('click', function() {
-			var sonido = new Audio('./mp3/ticking-clock_1-27477.mp3'); // dura 16 s
+			var sonido = new Audio(rutaSonido);
 			sonido.currentTime = 0;
-				sonido.play();			
+			sonido.play();
 			setInterval(function() {
 				sonido.currentTime = 0;
 				sonido.play();
-			}, 15000); // Reproducir cada 10 segundos (10000 milisegundos)
+			}, duracionSonido * 1000); // Reproducir cada duracionSonido segundos
 		}, { once: true });
 	}
 }
