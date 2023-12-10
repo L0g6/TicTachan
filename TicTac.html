@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TicTac</title>
+
+<script type="text/javascript">
+<!--
+window.onload = function()
+{
+	var ancho   = 100;
+	var alto  = 100;
+	var centroX = Math.floor(ancho / 2);
+	var centroY = Math.floor(alto / 2);
+	var lienzo  = document.getElementById('reloj');
+	var contexto = lienzo.getContext('2d');
+
+	setInterval(dibujarReloj, 1000);
+	dibujarReloj();
+
+	function dibujarReloj() {
+
+		var fecha   = new Date();
+		var hora   = fecha.getHours();
+		var minuto = fecha.getMinutes();
+		var segundo = fecha.getSeconds();
+
+
+		// Especificación del color
+		contexto.strokeStyle = '#666666';
+
+		contexto.clearRect(0, 0, lienzo.width, lienzo.height);
+
+		// Dibujar el dial
+		contexto.beginPath();
+		contexto.arc(centroX, centroY, centroX - 1, 0, Math.PI*2, false);
+		contexto.stroke();
+
+		contexto.save();
+		contexto.translate(ancho/2, alto/2);
+		for(var i=0;i < 360; i+= 30){
+			contexto.rotate( 30 * Math.PI / 180);
+			contexto.beginPath();
+			contexto.moveTo(0, centroY * 0.8);
+			contexto.lineTo(0, centroY * 0.9);
+			contexto.stroke();
+		}
+		contexto.translate(-ancho/2, -alto/2);
+		contexto.restore();
+
+		contexto.strokeStyle = '#333333';
+
+		dibujarAguja(centroY * 0.5, hora * 30 + minuto / 60 * 30);
+		dibujarAguja(centroY * 0.8, minuto * 6 + segundo / 60 * 6);
+
+		contexto.strokeStyle = '#EE0000';
+
+		dibujarAguja(centroY * 0.8, segundo * 6);
+	}
+
+	// Función para dibujar las agujas
+	function dibujarAguja(longitud, angulo){
+		contexto.save();
+		contexto.translate(centroX, centroY);
+		contexto.rotate( angulo * Math.PI / 180);
+		contexto.beginPath();
+		contexto.moveTo(0, 0);
+		contexto.lineTo(0, -longitud);
+		contexto.stroke();
+		contexto.translate(-centroX, -centroY);
+		contexto.restore();
+	}
+}
+//-->
+</script>
+
+</head>
+<body>
+	<canvas id="reloj"></canvas>
+</body>
+</html>
